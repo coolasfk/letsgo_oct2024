@@ -1,0 +1,33 @@
+# Node modules
+node_modules/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Dependency directories
+jspm_packages/
+bower_components/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Build directories
+dist/
+build/
+
+# Temporary files and caches
+*.tmp
+*.swp
+.vscode/
+.idea/
+
+# Yarn specific
+.yarn/*
+.pnp.*
+
+# Optional: exclude .expo or .expo-shared if using Expo for React Native
+.expo/
+.expo-shared/

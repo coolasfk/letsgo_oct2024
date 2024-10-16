@@ -1,0 +1,17 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "1a1111c4-83b3-403c-acda-1efbe0f81c0c"
+      }
+    },
+    "owner": "whatevacreates",
+    "slug": "letsgo",
+    "ios": {
+      "bundleIdentifier": "com.whatevacreates.letsgo"
+    },
+    "android": {
+      "package": "com.whatevacreates.letsgo"
+    }
+  }
+}
