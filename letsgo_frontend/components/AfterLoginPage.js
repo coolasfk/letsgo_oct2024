@@ -5,52 +5,30 @@ import { UseContextHook } from "../store/context/ContextProvider";
 import MyFriends from "./MyFriends";
 import axios from "axios";
 import Style from "../style/Style";
-// import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import SearchFriends from "./SearchFriends";
 
 const AfterLoginPage = ({ navigation }) => {
   let {
-    image,
-    user,
     setUser,
     userImage,
     setUserImage,
     userName,
     setUserName,
     setUserAge,
-    userAge,
     userSports,
     setUserSports,
-    userCity,
     setUserCity,
     userLocationServer,
     setUserLocationServer,
-    location,
-    setLocation,
-    userLocation,
-    setUserLocation,
-    newCity,
-    setCity,
-    setCityText,
-    cityText,
     fetchedUsers,
     setFetchedUsers,
-    userFriends,
-
     setUserFriends,
-    peopleIdontWannaSeeAgain,
-    setpeopleIdontWannaSeeAgain,
-    arrayWithMyFriendsId,
-    setArrayWithMyFriendsId,
     myFriendsFetched,
     setMyFriendsFetched,
     email,
-    setEmail,
     password,
-    setPassword,
     setUserId,
-    userId,
     path
   } = UseContextHook();
 
@@ -65,7 +43,6 @@ const AfterLoginPage = ({ navigation }) => {
     console.log("email", "password", email, password);
     try {
       result = await axios.post(
-        //"https://lestgo--coolasfk.repl.co/users/:email1/",
         `${path}users/:email1/`,
         { email1: email, password: password }
       );
@@ -99,14 +76,13 @@ const AfterLoginPage = ({ navigation }) => {
 
   let fetchUsers = async () => {
    
-
+console.log("sending a request to the server to fetch the nearby users");
     try {
       const response = await axios.post(
-        //"https://lestgo--coolasfk.repl.co/users_nearby", 
-        { distance: 1000, sports: userSports, location: userLocationServer }
         `${path}users_nearby`,
-  
+        { distance: 30000, sports: userSports, location: userLocationServer }      
       );
+      console.log("response: ", response);
       let returnedUsers = [];
 
       for (let user of response.data) {
@@ -145,7 +121,6 @@ const AfterLoginPage = ({ navigation }) => {
 
   useEffect(() => {
     axios
-      //.post("https://lestgo--coolasfk.repl.co/myfriends")
       .post(`${path}myfriends`)
       .then((response) => {
         let returnedUsers = [];

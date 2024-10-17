@@ -13,29 +13,21 @@ import { UseContextHook, useState } from "../store/context/ContextProvider";
 import Style from "../style/Style";
 import React, { useEffect } from "react";
 import axios from "axios";
-import MyFriends from "./MyFriends";
 
 import { Entypo } from "@expo/vector-icons";
 const SearchFriends = ({ navigation }) => {
   let {
-    user,
-    setUser,
     fetchedUsers,
     setFetchedUsers,
-    userFriends,
-    setUserFriends,
     peopleIdontWannaSeeAgain,
     setpeopleIdontWannaSeeAgain,
-    myFriendsFetched,
     setMyFriendsFetched,
     arrayWithMyFriendsId,
     setArrayWithMyFriendsId,
-    userCity,
-    setUserId,
     userId,
     path
   } = UseContextHook();
-console.log("SEARCH FRIENDS")
+
   const yes = (id, newUser) => {
     let newArray = fetchedUsers.filter((el) => el.id !== id);
 
@@ -60,7 +52,6 @@ console.log("SEARCH FRIENDS")
         `${path}users/updateArrayFriends`,
         { newFriend: id }
       );
-      "arrayWithMyFriendsId result", result.data;
     } catch (error) {
       "error putting data", error;
     }
@@ -172,7 +163,7 @@ const Item = ({
         </View>
         <View style={styles.sportContainer}>
           <View style={styles.sport}>
-            <Text style={styles.text}>{sports[0]}</Text>
+            <Text style={styles.text}>{sports?sports[0]:"missing"}</Text>
             <View style={styles.stars}>
               <AntDesign
                 name="star"
@@ -195,7 +186,7 @@ const Item = ({
             </View>
           </View>
           <View style={[styles.sport, { marginBottom: 30 }]}>
-            <Text style={styles.text}>{sports[1]}</Text>
+            <Text style={styles.text}>{sports?sports[1]:"missing"}</Text>
             <View style={styles.stars}>
               <AntDesign
                 name="star"

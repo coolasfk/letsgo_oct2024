@@ -31,3 +31,5 @@ build/
 # Optional: exclude .expo or .expo-shared if using Expo for React Native
 .expo/
 .expo-shared/
+
+ft copy.zip/

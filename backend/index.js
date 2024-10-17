@@ -42,19 +42,14 @@ app.use(
   })
 );
 
-try
-{
-
-
-mongoose.connect(
-  `mongodb+srv://LETSGO:b5pgmJwSQVpE1fkv@letsgo.w5jvdwy.mongodb.net/LETSGO?retryWrites=true&w=majority`)
-console.log("server connection was successful")
-}  
-catch(error)
-{
+try {
+  mongoose.connect(
+    "mongodb+srv://LETSGO:b5pgmJwSQVpE1fkv@letsgo.w5jvdwy.mongodb.net/LETSGO?retryWrites=true&w=majority"
+  );
+  console.log("server connection was successful");
+} catch (error) {
   console.log("so this is not working");
 }
-
 
 //const port = process.env.PORT || 443 || 8080 || 3000;
 const port = 3000;
@@ -63,9 +58,7 @@ app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
 
-
 const socketIo = require("socket.io");
-//const https = require("https");
 const http = require("http");
 const cors = require("cors");
 
@@ -73,23 +66,13 @@ const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
     origin: "*", // can switch to spefific urls later, replace "*" with ["http://localhost:3010"]
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   },
 });
 console.log("cors", cors);
 app.use(cors());
-// const express = require('express')
-// const  https = require('https')
-// const http = require('http')
-// const app = express()
-
-// http.createServer(app).listen(80)
-// https.createServer(options, app).listen(443)
-
-// why I am not seeing io.emit('hello')
 io.on("connection", (socket) => {
-  // console.log("socket", socket)
   console.log("New client connected");
   io.emit("Hello", "hi");
   io.emit("Hello", "hi");
@@ -215,6 +198,189 @@ app.get("/allusers", async (req, res) => {
 });
 
 app.post("/users_nearby", async (req, res) => {
+  console.log("------a request to find the users nearby");
+  const { distance, sports, location } = req.body;
+  session = req.session;
+
+  if (!req.session.me) {
+    return res.status(401).send("Error fetching users");
+  }
+
+  const me = req.session.me;
+  try {
+    const nearbyUsers = await User.aggregate([
+      {
+        $geoNear: {
+          near: {
+            type: "Point",
+            coordinates: location.coordinates,
+          },
+          distanceField: "distance",
+          maxDistance: distance,
+          spherical: true,
+        },
+      },
+      {
+        // Step 2: Exclude the requesting user by their _id and match sports
+        $match: {
+          _id: { $ne: me._id },
+          sports: { $in: sports },
+        },
+      },
+    ]);
+
+    const filteredUsers = nearbyUsers.filter((user) => !user._id.equals(me._id));
+
+    // Manually decrypt each result by creating Mongoose model instances
+    const decryptedUsers = filteredUsers.map((encryptedDoc) => {
+      const decryptedDoc = User.hydrate(encryptedDoc);
+      return decryptedDoc.toObject(); // Triggers decryption of fields
+    });
+
+    //console.log("Decrypted users:", decryptedUsers);
+    res.json(decryptedUsers);
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).send("Error fetching users");
+  }
+});
+
+/*
+app.post("/users_nearby", async (req, res) => {
+  console.log("------a request to find the users nearby");
+  const { distance, sports, location } = req.body;
+  session = req.session;
+
+  if (!req.session.me) {
+    return res.status(401).send("Error fetching users");
+  }
+
+  const me = req.session.me;
+
+  try {
+    const results = await User.find({
+      _id: { $nin: [...me.friends, me._id, ...me.peopleIdontWannaSeeAgain] },
+      location: {
+        $near: {
+          $geometry: {
+            type: "Point",
+            coordinates: location.coordinates
+          },
+          $maxDistance: distance
+        }
+      },
+      sports: { $in: sports }
+    })
+    .select('name age location city sports distance');
+
+    console.log("Matching users:", results);
+    res.json(results);
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).send("Error fetching users");
+  }
+});
+*/
+
+/*
+app.post("/users_nearby", async (req, res) => {
+  console.log("------a request to find the users nearby");
+  const { distance, sports, location } = req.body;
+  session = req.session;
+
+  if (!req.session.me) {
+    return res.status(401).send("Error fetching users");
+  }
+
+  const me = req.session.me;
+
+  try {
+    const results = await User.aggregate([
+      {
+        $geoNear: {
+          near: {
+            type: "Point",
+            coordinates: location.coordinates,
+          },
+          distanceField: "distance",
+          maxDistance: distance,
+          spherical: true,
+          query: {
+            _id: {
+              $nin: [...me.friends, me._id, ...me.peopleIdontWannaSeeAgain],
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          _ct: 1,
+          _ac: 1,
+          location: 1,
+          city: 1
+        },
+      },
+      /*
+      {
+        $match: {
+          sports: { $in: sports }
+        }
+      },
+    ]);
+
+    console.log("Matching users name::", results, "those were results");
+    res.json(results);
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).send("Error fetching users");
+  }
+});*/
+/*
+app.post("/users_nearby", async (req, res) => {
+  console.log("------a request to find the users nearby");
+  const { distance, sports, location } = req.body;
+  session = req.session;
+
+  if (!req.session.me) {
+    return res.status(401).send("Error fetching users");
+  }
+
+  const me = req.session.me;
+
+  try {
+    const results = await User.aggregate([
+      {
+        $geoNear: {
+          near: {
+            type: "Point",
+            coordinates: location.coordinates,
+          },
+          distanceField: "distance",
+          maxDistance: distance,
+          spherical: true,
+          query: {
+            _id: { $nin: [...me.friends, me._id, ...me.peopleIdontWannaSeeAgain] }
+          }
+        }
+      },
+      {
+        $match: {
+          sports: { $in: sports }
+        }
+      },
+    ]);
+
+    console.log("Matching users:", results);
+    res.json(results);
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).send("Error fetching users");
+  }
+});
+*/
+/*
+app.post("/users_nearby", async (req, res) => {
+  console.log("------a request to find the users nearby");
   let distance = req.body.distance;
 
   let sports = req.body.sports;
@@ -261,6 +427,42 @@ app.post("/users_nearby", async (req, res) => {
     res.status(401).send("Error fetching users");
   }
 });
+*/
+/*
+app.post("/users_nearby", async (req, res) => {
+  console.log("------a request to find the users nearby");
+  let distance = req.body.distance;
+  let sports = req.body.sports;
+  let location = req.body.location;
+  session = req.session;
+
+  if (req.session.me) {
+    let me = req.session?.me;
+    try {
+      const results = await User.aggregate([
+        {
+          $geoNear: {
+            near: {
+              type: "Point",
+              coordinates: location.coordinates // Ensure this is correct
+            },
+            distanceField: "distance",
+            maxDistance: distance, // Ensure `distance` is a valid number
+            spherical: true
+          }
+        },
+        // Optional: add further stages to filter by `sports`, etc.
+        { $match: { sports: { $in: sports } } }
+      ]);
+      console.log("success no error here");
+      res.json(results); 
+    } catch (e) {
+      console.error("nope it did not work out", e);
+      res.status(500).send("Error fetching users");
+    }
+  }
+});
+*/
 
 app.get("/check", (req, res) => {
   req.session.ollo = "ok";

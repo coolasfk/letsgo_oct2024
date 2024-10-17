@@ -3,37 +3,7 @@ const router = express.Router();
 const User = require("../models/User");
 const { createSecretToken } = require("../util/secretToken");
 const bcrypt = require("bcryptjs");
-// const {decrypt,encrypt} = require('../crypt.js')
 
-/*
-router.route('/')
-.post(async (req, res) => {
-
- console.log("req body", req.body)
-
- let { email1 } = req.body
-
-  const user = await User.findOne({ email1 })
-
-
-
- if (!user) {
- console.log("!user not found")
-  User.create(req.body).then((result) => {
-
-  req.session.me = result
-   console.log(result)
-         res.status(200).json(result);
-      });
-
-   } else {
-
-      console.log("the user exists")
-       res.status(403).send({ message: "user exists" })
-
-     }
-  })
-*/
 router
   .route("/")
   .post(async (req, res) => {
@@ -41,7 +11,6 @@ router
     console.log("---WE ARE AT THIS TOUCHPOINT");
     const user = await User.findOne({ email1 });
     try {
-      // const user = await User.findOne({ email1 })
 
       if (!user) {     
         
@@ -98,49 +67,16 @@ router
     }
   });
 
-// router.route('/:email1/')
-//   .post(async (req, res) => {
-
-//     console.log(req.body)
-//     let { email1, password } = req.body
-
-//     console.log("new email", email1, password)
-
-//     const query = { email1: `${email1}`, password: `${password}` }
-
-//     console.log("query", query)
-
-//     try {
-
-//       const user = await User.findOne(query)
-
-//       if (!user) {
-//         console.log("!user not found")
-//         res.sendStatus(404)
-//         return
-//       }
-
-//       req.session.me = user
-//       console.log("user", user)
-//       res.json(user)
-
-//     } catch (error) {
-//       console.log("error at email1", error)
-//       res.sendStatus(500)
-//     }
-
-//   })
-
 router.route("/:email1/").post(async (req, res) => {
-  console.log("req body, checking email", req.body);
+
   let { email1, password } = req.body;
 
   if (!email1 || !password) {
-    return res.json({ message: "All fields are required" });
+    return res.json({ message: "Error: Email or password is missing." });
   }
-  console.log("new email", email1, password);
+  console.log("email:", email1, "password: ", password);
   const query = { email1: `${email1}` };
-  console.log("query", query);
+  console.log("LOGGING QUERY: ", query);
   try {
     const user = await User.findOne(query);
     if (!user) {
@@ -205,7 +141,7 @@ router.route("/peopleIdontWannaSeeAgain").patch(async (req, res) => {
 
 router.route("/updateArrayFriends").patch(async (req, res) => {
   session = req.session;
-  console.log("trying to patch");
+  console.log("trying to patch array friends");
   let id = req.session?.me?._id;
 
   let newFriendId = req.body.newFriend;

@@ -128,49 +128,9 @@ const Item = ({
         <View style={styles.sportContainer}>
           <View style={styles.sport}>
             <Text style={styles.text}>{sports != null?sports[0]:"missing: sport1"}</Text>
-            {/* <View style={styles.stars}>
-              <AntDesign
-                name="star"
-                margin={1}
-                size={15}
-                color={Color.color1}
-              />
-              <AntDesign
-                name="star"
-                margin={1}
-                size={15}
-                color={Color.color1}
-              />
-              <AntDesign
-                name="star"
-                margin={1}
-                size={15}
-                color={Color.color1}
-              />
-            </View> */}
           </View>
           <View style={[styles.sport, { marginBottom: 30 }]}>
             <Text style={styles.text}>{sports != null? sports[1]: "missing: sport2"}</Text>
-            {/* <View style={styles.stars}>
-              <AntDesign
-                name="star"
-                margin={1}
-                size={15}
-                color={Color.color1}
-              />
-              <AntDesign
-                name="star"
-                margin={1}
-                size={15}
-                color={Color.color1}
-              />
-              <AntDesign
-                name="star"
-                margin={1}
-                size={15}
-                color={Color.color1}
-              />
-            </View> */}
           </View>
           <View
             style={{

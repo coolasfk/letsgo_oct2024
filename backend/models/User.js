@@ -6,20 +6,7 @@ const Schema = mongoose.Schema;
 
 const  secretMessageKey = process.env.SECRET_MESSAGE_KEY
 const sigMessageKey = process.env.SIG_MESSAGE_KEY
-// co t pointSchema = new mongoose.Schema({
-// 	type: {
-// 		type: String,
-// 		enum: ['Point'],
-// 		required: true
-// 	},
-// 	coordinates: {
-// 		type: [Number],
-// 		index: { type: '2dsphere', sparse: false },
-// 		required: true
-// 	}
-// });
 
-// pointSchema.plugin(encrypt, { encryptionKey: secretKey, signingKey: sigKey,encryptedFields: ['coordinates.0']})
 
 const userschema = new Schema({
   name: {
@@ -48,16 +35,8 @@ const userschema = new Schema({
     type: [String],
     required: true,
   },
-  // location: {
-  //   // type: pointSchema,
-  //   type: Point,
-  //   index: { type: '2dsphere', sparse: false },
-  //   required: true
-  // },
-
 
   location: {
-
     type: {
       type: String,
       enum: ["Point"],
@@ -69,6 +48,7 @@ const userschema = new Schema({
       required: true
     },
   },
+
 
   city: {
     type: String,
@@ -98,9 +78,6 @@ userschema.pre("save", async function() {
   this.password = await bcrypt.hash(this.password, 12);
 });
 
-
-
-
-userschema.plugin(encrypt, { encryptionKey: secretMessageKey, signingKey: sigMessageKey, encryptedFields: ['age', 'friends', 'peopleIdontWannaSeeAgain', 'bio', 'city', 'location. coordinates', 'image', 'sports', 'name'] });
+userschema.plugin(encrypt, { encryptionKey: secretMessageKey, signingKey: sigMessageKey, encryptedFields: ['age', 'friends', 'peopleIdontWannaSeeAgain', 'bio', 'image', 'name'] });
 const User = mongoose.model("User", userschema);
 module.exports = User;
